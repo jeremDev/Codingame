@@ -1,37 +1,53 @@
-/* This is my solution to the Ascii Art exercise on Codingame.com: http://www.codingame.com/challenge2_question1
- * TODO:
- * * Convert this to a class
- * * Use key-value pairs instead of using indexOf() */
-var width = readline();
-var height = readline();
-var regex = new RegExp(/[^A-Z]/g);
-var tmpText = readline().toUpperCase().replace(regex,"?");
-//var tmpText = tmpArr.join("");
-//print(tmpText);
-var text = tmpText.split("");
+/* This is my solution to the Ascii Art exercise on Codingame.com: http://www.codingame.com/challenge2_question1 */
 
-var ascii = new Array();
-var row;
-var alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ?".split("");
-var buffer = "";
-
-for (i = 0; i < height; i++) {
-    row = readline();
-    //print(row);
-    ascii[i] = new Array();
-    for(j = 0; j < width * 26; j++) {
-        ascii[i][j] = row.substr(j * width,width); // This would perform a little better if this used keys instead of iterating through
-        //print(ascii[i][j]);
-    }
+asciiGenerator = function() {
+	this.width;
+	this.height;
+	this.regex = new RegExp(/[^A-Z]/g);	// Used to replace any non-alpha characters with a question mark
+	this.text;
+	this.ascii = new Array();
+	this.row;
+	this.alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ?".split("");
+	
+	this.init = function() {
+		this.width = readline();	//read 1
+		this.height = readline();	//read 2
+	}
+	
+	this.readText = function() {
+		// Read in the string, make it upper case, replace any non-alpha characters with question marks, and put each character into an array
+		this.text = readline().toUpperCase().replace(this.regex,"?").split("");	//read 3
+	}
+	
+	this.readAsciiMappings = function() {
+		// Loop once for each row that will be read in
+		for (i = 0; i < this.height; i++) {
+			this.row = readline();		//read 4
+			this.ascii[i] = new Array();
+			// Loop over the alphabet, chopping up the row into array elements of the defined width, setting each letter as a key in the array
+			for(j = 0; j < this.alphabet.length; j++) {
+				this.ascii[i][this.alphabet[j]] = this.row.substr(j * this.width,this.width);
+			}
+		}
+	}
+	
+	this.convertToAscii = function() {
+		var buffer = "";
+		// Loop once for each row
+		for (i = 0; i < this.height; i++) {
+			// Loop once for each character in the text array
+			for(j = 0; j < this.text.length; j++) {
+				buffer += this.ascii[i][this.text[j]];
+			}
+			print(buffer);
+			buffer = "";
+		}
+	}
 }
 
-//print(ascii[0][0]);
+var myAsciiGenerator = new asciiGenerator();
+myAsciiGenerator.init();
+myAsciiGenerator.readText();
+myAsciiGenerator.readAsciiMappings();
+myAsciiGenerator.convertToAscii();
 
-for (i = 0; i < height; i++) {
-    for(j = 0; j < text.length; j++) {
-        pos = alphabet.indexOf(text[j]);
-        buffer += ascii[i][pos];
-    }
-    print(buffer);
-    buffer = "";
-}
